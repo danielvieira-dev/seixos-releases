@@ -16,12 +16,12 @@ Como conversar com a pessoa durante a instalação:
 - Fale em português do Brasil, curto e tranquilo. Ela não precisa ver nem entender os comandos.
 - Antes de começar, diga em uma frase o que vai acontecer: "Vou baixar o SeixOS do site oficial da Seix e instalar no seu computador. Leva uns dois minutos."
 - Durante, avise só as etapas: baixando, instalando, abrindo.
-- No fim, diga que terminou e onde encontrar o app (atalho na área de trabalho e no menu Iniciar ou na pasta Aplicativos).
+- No fim, diga que terminou e onde encontrar o app (atalho na área de trabalho e no menu Iniciar).
 - Se algo falhar, explique o problema em linguagem simples e o que ela pode fazer. Não despeje a mensagem de erro inteira.
 
 ### 1. Descobrir o sistema
 
-Veja se o computador é Windows ou Mac. Em outro sistema, diga que o SeixOS ainda não tem versão para ele e pare.
+Veja se o computador é Windows. No Mac, diga que a versão para Mac está chegando e que a Seix avisa quando sair, e pare. Em outro sistema, diga que o SeixOS ainda não tem versão para ele e pare.
 
 ### 2. Windows
 
@@ -45,25 +45,6 @@ Start-Process $app
 
 A instalação é só para o usuário atual e não pede senha de administrador. Se o antivírus bloquear o arquivo, diga à pessoa que é um app novo e que ela pode liberar na notificação do antivírus; não tente desativar o antivírus.
 
-### 3. Mac
-
-Rode no Terminal, de uma vez:
-
-```bash
-set -e
-url=$(curl -fsSL https://api.github.com/repos/danielvieira-dev/seixos-releases/releases/latest | grep -o '"browser_download_url": *"[^"]*\.dmg"' | head -1 | cut -d'"' -f4)
-[ -n "$url" ] || { echo "Instalador para Mac não encontrado na versão mais recente."; exit 1; }
-dmg="$TMPDIR/SeixOS.dmg"
-curl -fL "$url" -o "$dmg"
-vol=$(hdiutil attach "$dmg" -nobrowse | grep -o '/Volumes/.*' | head -1)
-rm -rf /Applications/SeixOS.app
-cp -R "$vol/SeixOS.app" /Applications/
-hdiutil detach "$vol" -quiet
-rm -f "$dmg"
-open /Applications/SeixOS.app
-echo "SeixOS instalado"
-```
-
-### 4. Depois de abrir
+### 3. Depois de abrir
 
 O SeixOS pede para entrar com a conta do Claude (a mesma assinatura que a pessoa já usa) e depois para criar a pasta do primeiro negócio. Diga isso a ela e encerre. As próximas versões chegam sozinhas: o app avisa quando houver uma nova.
