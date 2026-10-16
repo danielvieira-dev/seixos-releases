@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SeixOS Desktop</title>
+  <meta name="description" content="O app de marca e marketing da Seix Studios. Memória do negócio, identidade, pauta da semana e criativos, com o Claude trabalhando em segundo plano.">
+  <meta property="og:title" content="SeixOS Desktop">
+  <meta property="og:description" content="A marca do seu negócio, operada com o Claude.">
+  <meta name="theme-color" content="#101216">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400..700&family=Schibsted+Grotesk:wght@500..900&display=swap" rel="stylesheet">
+  <style>
+    /* Os mesmos tokens do app: tinta escura, osso, um acento só, cantos retos. */
+    :root {
+      --ink: #15171c;
+      --ink-fundo: #101216;
+      --ink-painel: #1a1d23;
+      --ink-card: #1d2027;
+      --osso: #f4f3ee;
+      --texto-2: #c9ccd2;
+      --texto-3: #a3a7b0;
+      --linha: rgba(244, 243, 238, 0.1);
+      --linha-forte: rgba(244, 243, 238, 0.22);
+      --neon: #00f248;
+      --display: 'Schibsted Grotesk', 'Instrument Sans', system-ui, sans-serif;
+      --corpo: 'Instrument Sans', system-ui, sans-serif;
+      --mono: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+      --gutter: clamp(16px, 5vw, 56px);
+      color-scheme: dark;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--ink-fundo); color: var(--osso); font-family: var(--corpo); font-size: 17px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+    a { color: var(--osso); }
+    a:hover { color: var(--neon); }
+    :focus-visible { outline: 2px solid var(--neon); outline-offset: 3px; }
+    ::selection { background: var(--neon); color: var(--ink-fundo); }
+    .oculto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .largura { max-width: 1160px; margin: 0 auto; padding: 0 var(--gutter); }
+
+    header.topo { position: sticky; top: 0; z-index: 10; background: rgba(16, 18, 22, 0.86); backdrop-filter: blur(10px); border-bottom: 1px solid var(--linha); }
+    header.topo .largura { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 16px; }
+    .marca { font-family: var(--display); font-size: 22px; letter-spacing: -0.03em; text-decoration: none; }
+    .marca b { font-weight: 800; }
+    .marca span { font-weight: 500; color: var(--neon); }
+    header.topo nav { display: flex; align-items: center; gap: 24px; font-size: 15px; }
+    header.topo nav a { text-decoration: none; color: var(--texto-2); }
+    header.topo nav a:hover { color: var(--osso); }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 22px; border: 1px solid var(--linha-forte); background: transparent; color: var(--osso); font: inherit; font-weight: 600; font-size: 16px; text-decoration: none; cursor: pointer; }
+    .btn:hover { border-color: var(--osso); color: var(--osso); }
+    .btn.primario { background: var(--neon); border-color: var(--neon); color: var(--ink-fundo); }
+    .btn.primario:hover { background: #3dff74; border-color: #3dff74; color: var(--ink-fundo); }
+    .btn.pequeno { min-height: 38px; padding: 0 16px; font-size: 14px; }
+
+    .eyebrow { font-size: 13px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--texto-3); margin: 0; }
+    .eyebrow.neon { color: var(--neon); }
+    h1, h2, h3 { font-family: var(--display); letter-spacing: -0.035em; margin: 0; }
+
+    .hero { padding: clamp(56px, 10vw, 120px) 0 clamp(48px, 8vw, 96px); border-bottom: 1px solid var(--linha); }
+    .hero .largura { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(32px, 6vw, 80px); align-items: center; }
+    .hero h1 { font-size: clamp(40px, 6.4vw, 78px); line-height: 1.02; font-weight: 800; margin-top: 18px; }
+    .hero h1 em { font-style: normal; color: var(--neon); }
+    .hero p.sub { font-size: clamp(17px, 1.6vw, 20px); color: var(--texto-2); max-width: 560px; margin: 24px 0 0; }
+
+    .instalar-caixa { border: 1px solid var(--linha-forte); background: var(--ink-painel); padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+    .instalar-caixa .passo { font-size: 14px; color: var(--texto-3); margin: 0; }
+    .prompt { display: block; margin: 0; padding: 16px 18px; background: var(--ink-fundo); border: 1px solid var(--linha); font-family: var(--mono); font-size: 14px; line-height: 1.6; color: var(--osso); white-space: pre-wrap; word-break: break-word; }
+    .instalar-caixa .acoes { display: flex; flex-wrap: wrap; gap: 10px; }
+    .instalar-caixa .acoes .btn { flex: 1 1 200px; }
+    .nota { font-size: 13px; color: var(--texto-3); margin: 0; line-height: 1.5; }
+    .versao { font-family: var(--mono); font-size: 13px; color: var(--texto-3); }
+    .copiado { color: var(--neon); font-size: 14px; min-height: 1.2em; margin: 0; }
+
+    section.bloco { padding: clamp(56px, 9vw, 112px) 0; border-bottom: 1px solid var(--linha); }
+    section.bloco h2 { font-size: clamp(30px, 4vw, 48px); line-height: 1.08; font-weight: 800; margin-top: 14px; max-width: 760px; }
+    section.bloco p.intro { color: var(--texto-2); max-width: 680px; margin: 18px 0 0; font-size: 18px; }
+
+    .passos { list-style: none; margin: 48px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border: 1px solid var(--linha); }
+    .passos li { padding: 28px; border-right: 1px solid var(--linha); display: flex; flex-direction: column; gap: 12px; }
+    .passos li:last-child { border-right: 0; }
+    .passos .num { font-family: var(--display); font-size: 44px; font-weight: 800; color: var(--neon); line-height: 1; }
+    .passos h3 { font-size: 22px; }
+    .passos p { margin: 0; color: var(--texto-2); font-size: 16px; }
+
+    .recursos { margin: 48px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .recurso { padding: 26px; background: var(--ink-painel); border: 1px solid var(--linha); display: flex; flex-direction: column; gap: 10px; }
+    .recurso h3 { font-size: 20px; }
+    .recurso p { margin: 0; color: var(--texto-2); font-size: 15.5px; }
+    .recurso .tela { font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--neon); }
+
+    .duas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(32px, 6vw, 80px); margin-top: 40px; }
+    .lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+    .lista li { padding: 18px 0; border-top: 1px solid var(--linha); display: flex; gap: 16px; }
+    .lista li:last-child { border-bottom: 1px solid var(--linha); }
+    .lista strong { flex: 0 0 170px; font-weight: 600; }
+    .lista span { color: var(--texto-2); }
+
+    .final { padding: clamp(64px, 10vw, 128px) 0; }
+    .final .largura { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 80px); align-items: start; }
+    .final h2 { font-size: clamp(32px, 4.4vw, 54px); line-height: 1.05; font-weight: 800; margin-top: 14px; }
+
+    footer { border-top: 1px solid var(--linha); padding: 28px 0; font-size: 14px; color: var(--texto-3); }
+    footer .largura { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+
+    @media (max-width: 900px) {
+      .hero .largura, .final .largura, .duas { grid-template-columns: minmax(0, 1fr); }
+      .passos, .recursos { grid-template-columns: minmax(0, 1fr); }
+      .passos li { border-right: 0; border-bottom: 1px solid var(--linha); }
+      .passos li:last-child { border-bottom: 0; }
+    }
+    @media (max-width: 560px) {
+      header.topo nav a.link { display: none; }
+      .lista li { flex-direction: column; gap: 4px; }
+      .lista strong { flex: none; }
+      .instalar-caixa { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topo">
+    <div class="largura">
+      <a class="marca" href="#" aria-label="SeixOS, início"><b>seix</b><span>OS</span></a>
+      <nav aria-label="Seções">
+        <a class="link" href="#como">Como funciona</a>
+        <a class="link" href="#dentro">O que tem dentro</a>
+        <a class="btn pequeno primario" href="#instalar">Instalar</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="t-hero">
+      <div class="largura">
+        <div>
+          <p class="eyebrow neon">SeixOS Desktop</p>
+          <h1 id="t-hero">A marca do seu negócio, operada com o <em>Claude</em>.</h1>
+          <p class="sub">Memória do negócio, identidade, pauta da semana e criativos prontos num app só. O Claude trabalha em segundo plano. Você só entra quando a decisão é sua.</p>
+        </div>
+        <div class="instalar-caixa" data-instalar>
+          <p class="passo">Abra o Claude Code e cole este pedido:</p>
+          <code class="prompt" data-prompt>Instale o SeixOS para mim seguindo https://raw.githubusercontent.com/danielvieira-dev/seixos-releases/main/INSTALL.md</code>
+          <div class="acoes">
+            <button type="button" class="btn primario" data-copiar>Copiar o pedido</button>
+            <a class="btn" data-baixar href="https://github.com/danielvieira-dev/seixos-releases/releases/latest">Baixar para Windows</a>
+          </div>
+          <p class="copiado" role="status" aria-live="polite" data-aviso></p>
+          <p class="nota">Pelo Claude Code a instalação é direta. Baixando pelo navegador, o Windows mostra um aviso de "editor desconhecido": clique em "Mais informações" e em "Executar assim mesmo".</p>
+          <span class="versao" data-versao></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="bloco" id="como" aria-labelledby="t-como">
+      <div class="largura">
+        <p class="eyebrow">Como funciona</p>
+        <h2 id="t-como">Você dirige. O trabalho acontece em segundo plano.</h2>
+        <p class="intro">Nada de terminal nem de conversa sem fim. Cada pedido vira uma run com etapas. Quando aparece uma decisão que é sua, o app pergunta, e você aprova ou ajusta.</p>
+        <ol class="passos">
+          <li>
+            <span class="num" aria-hidden="true">1</span>
+            <h3>Instale</h3>
+            <p>Cole o pedido no Claude Code. Ele baixa a versão mais recente, instala e abre o app. As próximas versões chegam sozinhas.</p>
+          </li>
+          <li>
+            <span class="num" aria-hidden="true">2</span>
+            <h3>Conte quem é o negócio</h3>
+            <p>A instalação é feita em cards: o que o negócio faz, quem compra, como fala, o que importa agora. Isso vira a memória que tudo lê antes de produzir.</p>
+          </li>
+          <li>
+            <span class="num" aria-hidden="true">3</span>
+            <h3>Opere a semana</h3>
+            <p>Planeje a pauta, produza carrosséis com a sua identidade, aprove o texto antes da arte e registre o resultado. O que funcionou alimenta a próxima peça.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="bloco" id="dentro" aria-labelledby="t-dentro">
+      <div class="largura">
+        <p class="eyebrow">O que tem dentro</p>
+        <h2 id="t-dentro">Cada peça sai com o que a marca já aprendeu.</h2>
+        <div class="recursos">
+          <article class="recurso">
+            <span class="tela">Hoje</span>
+            <h3>A semana em uma tela</h3>
+            <p>Calendário com o que está em pauta, em produção, pronto e publicado. A próxima decisão aparece primeiro.</p>
+          </article>
+          <article class="recurso">
+            <span class="tela">Carrossel</span>
+            <h3>Criativos com a sua identidade</h3>
+            <p>Ângulo, aberturas, texto e slides no tamanho certo, com legenda. Você aprova o texto na tela antes de virar arte.</p>
+          </article>
+          <article class="recurso">
+            <span class="tela">Regras</span>
+            <h3>Ajuste vira regra</h3>
+            <p>Pediu para mudar algo num criativo? O pedido vira regra e vale para todos os próximos, sem repetir a mesma correção.</p>
+          </article>
+          <article class="recurso">
+            <span class="tela">Radar das fontes</span>
+            <h3>Ideias do que o público já assiste</h3>
+            <p>Canais do YouTube, notícias e blogs que você acompanha viram ideias com o trecho literal, o minuto exato e o ângulo para a marca.</p>
+          </article>
+          <article class="recurso">
+            <span class="tela">Memória</span>
+            <h3>O negócio lembrado de verdade</h3>
+            <p>O núcleo curto que o Claude lê sempre, a linha do tempo de tudo que aconteceu e a consolidação que transforma o que aconteceu em conhecimento.</p>
+          </article>
+          <article class="recurso">
+            <span class="tela">Marca e busca</span>
+            <h3>Score, SEO e anúncios</h3>
+            <p>Branding Score com evidência por pilar, estratégia de busca e anúncios do Google a partir da mesma memória.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="bloco" aria-labelledby="t-precisa">
+      <div class="largura">
+        <p class="eyebrow">Antes de instalar</p>
+        <h2 id="t-precisa">O que você precisa e onde ficam os seus dados.</h2>
+        <div class="duas">
+          <ul class="lista" aria-label="Requisitos">
+            <li><strong>Computador</strong><span>Windows 10 ou 11. Versão para Mac em breve.</span></li>
+            <li><strong>Claude</strong><span>Uma assinatura do Claude (Pro ou Max) ou uma chave da API da Anthropic.</span></li>
+            <li><strong>Claude Code</strong><span>Para instalar pelo pedido. Sem ele, use o botão de download.</span></li>
+          </ul>
+          <ul class="lista" aria-label="Seus dados">
+            <li><strong>Na sua máquina</strong><span>Memória, identidade, criativos e resultados ficam numa pasta no seu computador, uma por negócio.</span></li>
+            <li><strong>Pela sua conta</strong><span>O app trabalha com o Claude pela sua própria conta. O uso conta no seu plano.</span></li>
+            <li><strong>Sem amarra</strong><span>Tudo em arquivos abertos (texto e imagem). A pasta é sua, com ou sem o app.</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="final" id="instalar" aria-labelledby="t-instalar">
+      <div class="largura">
+        <div>
+          <p class="eyebrow neon">Instalar</p>
+          <h2 id="t-instalar">Dois minutos, um pedido.</h2>
+          <p class="intro" style="color: var(--texto-2); margin-top: 18px; max-width: 520px;">Depois de abrir, o app pede para entrar com a sua conta do Claude e criar a pasta do primeiro negócio.</p>
+        </div>
+        <div class="instalar-caixa" data-instalar>
+          <p class="passo">Abra o Claude Code e cole este pedido:</p>
+          <code class="prompt" data-prompt>Instale o SeixOS para mim seguindo https://raw.githubusercontent.com/danielvieira-dev/seixos-releases/main/INSTALL.md</code>
+          <div class="acoes">
+            <button type="button" class="btn primario" data-copiar>Copiar o pedido</button>
+            <a class="btn" data-baixar href="https://github.com/danielvieira-dev/seixos-releases/releases/latest">Baixar para Windows</a>
+          </div>
+          <p class="copiado" role="status" aria-live="polite" data-aviso></p>
+          <span class="versao" data-versao></span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="largura">
+      <span>SeixOS Desktop · Seix Studios</span>
+      <a href="https://github.com/danielvieira-dev/seixos-releases/releases">Todas as versões</a>
+    </div>
+  </footer>
+
+  <script>
+    // Copiar o pedido para o Claude Code.
+    document.querySelectorAll('[data-instalar]').forEach((caixa) => {
+      const botao = caixa.querySelector('[data-copiar]')
+      const aviso = caixa.querySelector('[data-aviso]')
+      const texto = caixa.querySelector('[data-prompt]').textContent.trim()
+      botao.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(texto)
+        } catch {
+          const area = document.createElement('textarea')
+          area.value = texto
+          document.body.appendChild(area)
+          area.select()
+          document.execCommand('copy')
+          area.remove()
+        }
+        aviso.textContent = 'Copiado. Agora cole no Claude Code.'
+        botao.textContent = 'Copiado'
+        setTimeout(() => { botao.textContent = 'Copiar o pedido'; aviso.textContent = '' }, 4000)
+      })
+    })
+
+    // A versão mais recente e o link direto do instalador, lidos dos Releases.
+    fetch('https://api.github.com/repos/danielvieira-dev/seixos-releases/releases/latest')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((rel) => {
+        if (!rel) return
+        const exe = (rel.assets || []).find((a) => /setup\.exe$/i.test(a.name))
+        const data = rel.published_at ? new Date(rel.published_at).toLocaleDateString('pt-BR') : ''
+        document.querySelectorAll('[data-versao]').forEach((el) => { el.textContent = `Versão ${rel.tag_name.replace(/^v/, '')}${data ? ` · ${data}` : ''}` })
+        if (exe) document.querySelectorAll('[data-baixar]').forEach((el) => { el.href = exe.browser_download_url })
+      })
+      .catch(() => {})
+  </script>
+</body>
+</html>
